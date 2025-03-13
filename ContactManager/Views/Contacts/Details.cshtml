@@ -4,33 +4,39 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h2>Details</h2>
 
 <div>
     <h4>Contact</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
+        <dd class="col-sm-10">
+            @(Model.Category?.Name ?? "No category")
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
+        <dt class="col-sm-2">
+            Primary Phone
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
+        <dd class="col-sm-10">
+            @(Model.Phones.FirstOrDefault(p => p.IsPrimary)?.PhoneNumber ?? Model.Phones.FirstOrDefault()?.PhoneNumber ?? "No phone")
+        </dd>
+        <dt class="col-sm-2">
+            Primary Email
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.Emails.FirstOrDefault(e => e.IsPrimary)?.EmailAddress ?? Model.Emails.FirstOrDefault()?.EmailAddress ?? "No email")
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

@@ -1,34 +1,44 @@
 ﻿@model IEnumerable<ContactManager.Models.Contact>
-@Html.Partial("_Notifications")
+
+@{
+    ViewData["Title"] = "Index";
+}
 
 <h1>Index</h1>
 
-<form asp-action="Index" method="get" class="search-form">
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
     <div class="form-group">
-        <input type="text" name="searchString" class="form-control" placeholder="Search by Name, Phone, or Email..." />
+        <label for="searchString">Search by Name, Phone, or Email:</label>
+        <input type="text" name="searchString" class="form-control" />
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
 </form>
 
-<p>
-    <a asp-action="Create">Create New</a> | @Html.Raw(ViewData["SearchResult"] ?? "")
-</p>
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Name)</th>
-            <th>@Html.DisplayNameFor(model => model.Phone)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th></th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Category</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
+            var primaryPhone = item.Phones.FirstOrDefault(p => p.IsPrimary)?.PhoneNumber ?? item.Phones.FirstOrDefault()?.PhoneNumber ?? string.Empty;
+            var primaryEmail = item.Emails.FirstOrDefault(e => e.IsPrimary)?.EmailAddress ?? item.Emails.FirstOrDefault()?.EmailAddress ?? string.Empty;
+            var categoryName = item.Category?.Name ?? string.Empty;
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => primaryPhone)</td>
+                <td>@Html.DisplayFor(modelItem => primaryEmail)</td>
+                <td>@Html.DisplayFor(modelItem => categoryName)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

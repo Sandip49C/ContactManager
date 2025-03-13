@@ -6,14 +6,38 @@
     <title>@ViewData["Title"] - ContactManager</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ContactManager.styles.css" asp-append-version="true" />
+    <style>
+        /* Custom CSS for compact notification bar */
+        .notification-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #e9f5ff; /* Light blue background */
+            padding: 5px 10px;
+            max-height: 100px; /* Limit height */
+            overflow-y: auto; /* Scroll if too many notifications */
+            z-index: 1000;
+            border-top: 1px solid #ccc;
+            font-size: 0.9em; /* Smaller text */
+        }
+        .notification-bar ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+        .notification-bar li {
+            margin: 2px 0;
+            padding: 2px 5px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
+            <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ContactManager</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -39,6 +63,10 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             © 2025 - ContactManager - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+        <!-- Notification bar at the bottom -->
+        <div class="notification-bar">
+            <partial name="_Notifications" model="@(ViewData["Notifications"] as IEnumerable<ContactManager.Models.Notification>)" />
         </div>
     </footer>
 

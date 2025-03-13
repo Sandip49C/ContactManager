@@ -1,45 +1,58 @@
 ﻿@model ContactManager.Models.Contact
-@Html.Partial("_Notifications")
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h2>Edit</h2>
 
-<h4>Contact</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-</div>
+    <div class="form-group">
+        <label asp-for="CategoryId" class="control-label"></label>
+        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+            <option value="">Select a category</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="phoneNumber">Phone</label>
+        <input type="text" class="form-control" name="phoneNumber" value="@(Model.Phones?.FirstOrDefault()?.PhoneNumber ?? "")" placeholder="Enter phone number" />
+        <!-- Removed asp-validation-for="phoneNumber" since it's not a model property -->
+        @if (ViewData.ModelState.ContainsKey("phoneNumber") && ViewData.ModelState["phoneNumber"].Errors.Any())
+        {
+            <span class="text-danger">@ViewData.ModelState["phoneNumber"].Errors.First().ErrorMessage</span>
+        }
+    </div>
+    <div class="form-group">
+        <label for="emailAddress">Email</label>
+        <input type="text" class="form-control" name="emailAddress" value="@(Model.Emails?.FirstOrDefault()?.EmailAddress ?? "")" placeholder="Enter email address" />
+        <!-- Removed asp-validation-for="emailAddress" since it's not a model property -->
+        @if (ViewData.ModelState.ContainsKey("emailAddress") && ViewData.ModelState["emailAddress"].Errors.Any())
+        {
+            <span class="text-danger">@ViewData.ModelState["emailAddress"].Errors.First().ErrorMessage</span>
+        }
+    </div>
+    <div class="form-group">
+        <span class="text-danger">@Html.ValidationSummary(true)</span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+    <input type="hidden" asp-for="Id" />
+    @Html.AntiForgeryToken()
+</form>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

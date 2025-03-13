@@ -1,36 +1,53 @@
 ﻿using ContactManager.Models;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ContactManager.Services
 {
     public class NotificationService
     {
-        private const string NotificationKey = "Notifications";
-        private readonly ISession _session;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public NotificationService(IHttpContextAccessor httpContextAccessor)
         {
-            _session = httpContextAccessor.HttpContext?.Session;
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public void AddNotification(string message, string type = "success")
+        public void AddNotification(string message, string type)
         {
-            ClearNotifications();
-            var notifications = new List<Notification>();
-            notifications.Add(new Notification { Message = message, Type = type });
-            _session.SetString(NotificationKey, JsonConvert.SerializeObject(notifications));
+            var notifications = GetNotifications();
+            notifications.Add(new Notification
+            {
+                Message = message ?? throw new ArgumentNullException(nameof(message)),
+                Type = type ?? throw new ArgumentNullException(nameof(type)),
+                CreatedAt = DateTime.Now,
+                IsRead = false,
+                UserId = 1 // Hardcoded for now; update with actual user ID in a real app
+            });
+            SaveNotifications(notifications);
         }
 
         public List<Notification> GetNotifications()
         {
-            var json = _session.GetString(NotificationKey);
-            return json == null ? new List<Notification>() : JsonConvert.DeserializeObject<List<Notification>>(json);
+            var session = _httpContextAccessor.HttpContext?.Session;
+            if (session == null)
+            {
+                return new List<Notification>();
+            }
+            var notificationsJson = session.GetString("Notifications");
+            return string.IsNullOrEmpty(notificationsJson)
+                ? new List<Notification>()
+                : JsonSerializer.Deserialize<List<Notification>>(notificationsJson) ?? new List<Notification>();
         }
 
-        public void ClearNotifications()
+        private void SaveNotifications(List<Notification> notifications)
         {
-            _session.Remove(NotificationKey);
+            var session = _httpContextAccessor.HttpContext?.Session;
+            if (session != null)
+            {
+                var notificationsJson = JsonSerializer.Serialize(notifications);
+                session.SetString("Notifications", notificationsJson);
+            }
         }
     }
 }

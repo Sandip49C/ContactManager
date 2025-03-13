@@ -1,15 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ContactManager.Models
+﻿namespace ContactManager.Models
 {
     public class Contact
     {
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Phone { get; set; }
-        [Required]
-        public string Email { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int CategoryId { get; set; }
+        public Category? Category { get; set; } // Nullable navigation property
+        public List<Phone> Phones { get; set; } = new List<Phone>();
+        public List<Email> Emails { get; set; } = new List<Email>();
     }
 }
